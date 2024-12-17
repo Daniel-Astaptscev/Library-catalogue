@@ -4,14 +4,14 @@ from tkinter.messagebox import showerror, showinfo, askyesno
 
 class ButtonDelete:
 
-    def __init__(self, item):
-        self.item = item
+    def __init__(self, book_id):
+        self.book_id = book_id
         self.result = askyesno(title='Удаление книги из библиотеки',
                           message='Подтвердить удаление?')
 
         if self.result:
             try:
-                delete_book.request(book_id=self.item)
+                delete_book.request(self.book_id)
             except:
                 showerror(title='Ошибка', message='Ни одна книга не '
                                                   'выбрана\nСделана запись в лог-файл')

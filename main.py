@@ -66,7 +66,7 @@ class App(tk.Tk):
         """
         menu = tk.Menu()
         menu.add_cascade(label='Обновить', command=self.update_tree)
-        menu.add_cascade(label='Добавить книгу', command=self.btn_add)
+        menu.add_cascade(label='Добавить книгу', command=btn_add.ButtonAdd)
         menu.add_cascade(label='Изменить книгу', command=self.btn_change)
         menu.add_cascade(label='Найти книгу', command=self.btn_find)
         menu.add_cascade(label='Удалить книгу', command=self.btn_delete)
@@ -74,7 +74,7 @@ class App(tk.Tk):
         self.option_add('*tearOff', tk.FALSE)
         return menu
 
-    def item_selected(self, event) -> None:
+    def item_selected(self, event):
         """
         Обработка выделения строки в дереве записей приложения
 
@@ -124,7 +124,7 @@ class App(tk.Tk):
         self.tree.column('#5', stretch=tk.NO, width=80, anchor='center')
 
         scrollbar = ttk.Scrollbar(orient=tk.VERTICAL, command=self.tree.yview)
-        self.tree.configure(yscroll=scrollbar.set)
+        self.tree.configure(yscrollcommand=scrollbar.set)
         scrollbar.grid(row=2, column=1, sticky='ns')
 
         if type(bd) == list:
@@ -153,17 +153,11 @@ class App(tk.Tk):
 
     # Методы для работы с кнопками основного меню
     ####################################################
-    def btn_add(self) -> None:
-        """
-        Запуск модального окна при взаимодействии пользователя с инструментом основного меню -> добавить книгу.
-        """
-        button_add = btn_add.ButtonAdd()
-
     def btn_change(self) -> None:
         """
         Запуск модального окна при взаимодействии пользователя с инструментом основного меню -> изменить книгу.
         """
-        pass
+        button_change = btn_change.ButtonChange(self.select_item)
 
     def btn_find(self) -> None:
         """

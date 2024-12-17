@@ -37,7 +37,7 @@ def request_sum() -> list:
     book = cursor.fetchall()
     len_sum_all = book[0][0]
 
-    cursor.execute('SELECT COUNT(id) FROM Books WHERE presence = 1')
+    cursor.execute('SELECT COUNT(id) FROM Books WHERE state = 1')
     book = cursor.fetchall()
     len_sum_state = book[0][0]
 

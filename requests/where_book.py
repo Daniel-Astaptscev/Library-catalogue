@@ -1,6 +1,6 @@
 import sqlite3
 
-def request(book_author: str, book_title: str, book_year: int) -> list:
+def request(**book_parameters) -> list:
     """           
     Args:
         book_author (str, optional): столбец для автора книги.
@@ -13,7 +13,17 @@ def request(book_author: str, book_title: str, book_year: int) -> list:
     connection = sqlite3.connect('./data/books.db')
     cursor = connection.cursor()
 
-    cursor.execute('SELECT * FROM Books WHERE author = ? OR title = ? OR year = ?', (book_author, book_title, book_year))
+    query = "SELECT * FROM Books WHERE "
+
+    books_find = []
+    for key, value in book_parameters.items():
+        query += f"{key} = ?"
+        query += " AND "
+        books_find.append(value)
+    # удаление последнего "AND" из запроса
+    query = query[:-4]
+
+    cursor.execute(query, tuple(books_find))
     books = cursor.fetchall()
             
     connection.commit()

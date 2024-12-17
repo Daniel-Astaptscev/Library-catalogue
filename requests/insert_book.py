@@ -15,8 +15,8 @@ def request(author: str, title: str, state: int, status: int, masterpiece: int, 
     connection = sqlite3.connect('./data/books.db')
     cursor = connection.cursor()
 
-    cursor.execute('INSERT INTO Books (author, title, presence, read, '
-                    'masterpiece, genre) VALUES (?, ?, ?, ?, ?, ?)',
+    cursor.execute('INSERT INTO Books (author, title, state, status, '
+                    'masterpiece, trash) VALUES (?, ?, ?, ?, ?, ?)',
                    (author, title, state, status, masterpiece, trash))
 
     connection.commit()
