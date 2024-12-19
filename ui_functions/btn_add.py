@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from requests import insert_book
+from ui_functions import window_center, logger
 
 class ButtonAdd:
 
@@ -9,6 +10,8 @@ class ButtonAdd:
         self.add_window.title('Добавить книгу')
         self.add_window.geometry('610x280')
         self.add_window.iconbitmap('./icons/favicon_add.ico')
+
+        window_center.center(self.add_window)
         self.create_window()
 
     def create_window(self):
@@ -33,10 +36,10 @@ class ButtonAdd:
 
         label_status = ttk.Label(self.add_window, text='Наличие:',
                                  font=('Georgia', 14))
-        label_status.place(x=312, y=104)
+        label_status.place(x=326, y=105)
         status = ['В библиотеке', 'Отсутствует']
         combobox_status = ttk.Combobox(self.add_window, values=status)
-        combobox_status.place(x=410, y=110)
+        combobox_status.place(x=420, y=110)
 
         answer = ['Да', 'Нет']
         label_masterpiece = ttk.Label(self.add_window, text='Шедевр:',
@@ -76,9 +79,16 @@ class ButtonAdd:
     def action(self):
         author = self.entry_author.get()
         title = self.entry_title.get()
-        state = f'{1 if self.select_state == "Прочитано" else 0}'
-        status = f'{1 if self.select_status == "В библиотеке" else 0}'
-        masterpiece = f'{1 if self.select_masterpiece == "Да" else 0}'
-        trash = f'{1 if self.select_trash == "Да" else 0}'
-        insert_book.request(author, title, state, status, masterpiece, trash)
-        self.add_window.destroy()
+        try: 
+            state = f'{1 if self.select_state == "Прочитано" else 0}'
+            status = f'{1 if self.select_status == "В библиотеке" else 0}'
+            masterpiece = f'{1 if self.select_masterpiece == "Да" else 0}'
+            trash = f'{1 if self.select_trash == "Да" else 0}'
+        except AttributeError as error:
+            logger.add_log(error, 'add')
+        else:
+            if len(author) !=0 and len(title) != 0: 
+                insert_book.request(author, title, state, status, masterpiece, trash)
+                self.add_window.destroy()
+            else:
+                logger.add_log('the text in the field is empty', 'add')

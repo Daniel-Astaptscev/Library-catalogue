@@ -1,12 +1,9 @@
 import sqlite3
 
-def request(**book_parameters) -> list:
+def request(**book_parameters: dict) -> list:
     """           
     Args:
-        book_author (str, optional): столбец для автора книги.
-        book_title (str, optional): столбец для названия книги.
-        book_year (int, optional): столбец для года издания книги.
-
+        book_parameters (dict): ???
     Returns:
         books (list): формируется список из кортежей/а в каждом из которых вся информация по книге/ам
     """

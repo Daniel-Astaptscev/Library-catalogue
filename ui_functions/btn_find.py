@@ -1,97 +1,90 @@
-class ButtonDelete:
+import tkinter as tk
+from tkinter import ttk
+from requests import where_book
+from ui_functions import window_center
 
-    # elif btn_name == 'btn_find':
-    #     add_window.title('Найти книгу')
-    #     add_window.iconbitmap('./assets/icons/favicon_find.ico')
-    #     label_status.destroy()
-    #     combobox_status.destroy()
-    #     label_text = ttk.Label(add_window,
-    #                            text='необходимо выбрать и заполнить ОДНО поле по которому будет осуществляться поиск книги',
-    #                            font=('Times New Roman', 10),
-    #                            background='white', wraplength=350,
-    #                            justify=tk.CENTER)
-    #     label_text.place(x=61, y=154)
-    #     btn_submit = ttk.Button(add_window, text='Найти книгу',
-    #                             command=action)
-    # elif btn_name == 'btn_change':
-    #     add_window.title('Изменить книгу')
-    #     add_window.iconbitmap('./assets/icons/favicon_change.ico')
-    #     btn_submit = ttk.Button(add_window, text='Изменить книгу',
-    #                             command=action)
-    #
-    #     # Проверка осуществлен ли выбор любой строки для изменения или
-    #     # удаления
-    #     try:
-    #         entry_author.insert(0, self.select_item[1])
-    #         entry_title.insert(0, self.select_item[2])
-    #         spinbox_year.insert(0, self.select_item[3])
-    #         combobox_status.set('В наличии' if self.select_item[
-    #                                                4] == 'В наличии' else 'Выдана')
-    #     except:
-    #         showerror(title='Ошибка',
-    #                   message='Ни одна книга не выбрана\nСделана запись в лог-файл')
-    #         add_window.destroy()
-    #         return logging(type_error='AttributeError')
+class ButtonFind:
 
+    def __init__(self):
+        self.add_window = tk.Toplevel()
+        self.add_window.title('Найти книгу(и)')
+        self.add_window.geometry('610x280')
+        self.add_window.iconbitmap('./icons/favicon_find.ico')
 
-# def action():
-#             """
-#             В зависимости от типа кнопки выбранной пользователем в
-#             основном меню - реализуется запрос через класс Request в файле
-#             sql_requests.py к базе данных.
-#
-#             Returns:
-#                 showerror (func, optional): запуск диалогового окна при
-#                 возникновении ошибки не являющейся критической.
-#
-#                 logging (func, optional): при получении ошибки в ходе
-#                 операции производит запуск функции осуществляющей её запись в
-#                 текстовый файл.
-#             """
-#             book_author = entry_author.get()
-#             book_title = entry_title.get()
-#             book_year = spinbox_year.get()
-#
-#             if btn_name == 'btn_find':
-#                 self.update_tree(
-#                     sql_requests.where.connection_with_request(book_author,
-#                                                                book_title,
-#                                                                book_year))
-#                 add_window.destroy()
-#                 return None
-#
-#             select_status = combobox_status.get()
-#             book_status = f'{1 if select_status == "В наличии" else 0}'
-#
-#             # Проверка блока на заполнение всех полей
-#             if (len(book_author) == 0 or len(book_title) == 0 or len(
-#                     book_year) == 0 or len(
-#                 select_status) == 0) and btn_name != 'btn_find':
-#                 return showerror(title='Ошибка',
-#                                  message='Не все поля заполнены')
-#
-#             # Проверка блока на ошибку при вводе в поле вместо цифр для года - буквы или другие знаки
-#             try:
-#                 if btn_name == 'btn_add':
-#                     sql_requests.update.connection_with_request(book_author,
-#                                                                 book_title,
-#                                                                 int(book_year),
-#                                                                 int(book_status))
-#                 elif btn_name == 'btn_change':
-#                     book_id = self.select_item[0]
-#                     sql_requests.update.connection_with_request(book_author,
-#                                                                 book_title,
-#                                                                 int(book_year),
-#                                                                 int(book_status),
-#                                                                 book_id)
-#             except:
-#                 showerror(title='Ошибка',
-#                           message='Нельзя указывать никакие другие символы в поле "год" кроме цифр\nСделана запись в лог-файл')
-#                 return logging(type_error='ValueError')
-#
-#             add_window.destroy()
+        window_center.center(self.add_window)
+        self.create_window()
 
+    def create_window(self):
+        label_author = ttk.Label(self.add_window, text='Автор:',
+                                 font=('Georgia', 14))
+        label_author.place(x=66, y=20)
+        self.entry_author = ttk.Entry(self.add_window, font=('Georgia', 14), width=30)
+        self.entry_author.place(x=140, y=20)
 
+        label_title = ttk.Label(self.add_window, text='Название:',
+                                font=('Georgia', 14))
+        label_title.place(x=34, y=60)
+        self.entry_title = ttk.Entry(self.add_window, font=('Georgia', 14), width=30)
+        self.entry_title.place(x=140, y=60)
 
-            
+        label_state = ttk.Label(self.add_window, text='Состояние:',
+                                font=('Georgia', 14))
+        label_state.place(x=30, y=104)
+        state = ['Прочитано', 'Не прочитано']
+        combobox_state = ttk.Combobox(self.add_window, values=state)
+        combobox_state.place(x=140, y=110)
 
+        label_status = ttk.Label(self.add_window, text='Наличие:',
+                                 font=('Georgia', 14))
+        label_status.place(x=326, y=105)
+        status = ['В библиотеке', 'Отсутствует']
+        combobox_status = ttk.Combobox(self.add_window, values=status)
+        combobox_status.place(x=420, y=110)
+
+        answer = ['Да', 'Нет']
+        label_masterpiece = ttk.Label(self.add_window, text='Шедевр:',
+                                      font=('Georgia', 14))
+        label_masterpiece.place(x=51, y=150)
+        combobox_masterpiece = ttk.Combobox(self.add_window, values=answer)
+        combobox_masterpiece.place(x=140, y=155)
+
+        label_trash = ttk.Label(self.add_window, text='Макулатура:',
+                                font=('Georgia', 14))
+        label_trash.place(x=300, y=150)
+        combobox_trash = ttk.Combobox(self.add_window, values=answer)
+        combobox_trash.place(x=420, y=155)
+
+        def selected_state(event):
+            self.select_state = combobox_state.get()
+
+        def selected_status(event):
+            self.select_status = combobox_status.get()
+
+        def selected_masterpiece(event):
+            self.select_masterpiece = combobox_masterpiece.get()
+
+        def selected_trash(event):
+            self.select_trash = combobox_trash.get()
+
+        combobox_state.bind('<<ComboboxSelected>>', selected_state)
+        combobox_status.bind('<<ComboboxSelected>>', selected_status)
+        combobox_masterpiece.bind('<<ComboboxSelected>>',
+                                  selected_masterpiece)
+        combobox_trash.bind('<<ComboboxSelected>>', selected_trash)
+
+        btn_submit = ttk.Button(self.add_window, text='Найти книгу(и)',
+                                command=self.action)
+        btn_submit.place(x=260, y=218)
+
+    def action(self):
+        author = self.entry_author.get()
+        title = self.entry_title.get()
+
+        try: 
+            state = f'{1 if self.select_state == "Прочитано" else 0}'
+            status = f'{1 if self.select_status == "В библиотеке" else 0}'
+            masterpiece = f'{1 if self.select_masterpiece == "Да" else 0}'
+            trash = f'{1 if self.select_trash == "Да" else 0}'
+        finally:
+            # where_book.request(author=author, title=title, state=state, status=status, masterpiece=masterpiece, trash=trash)
+            self.add_window.destroy()

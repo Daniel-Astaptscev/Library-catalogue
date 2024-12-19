@@ -1,6 +1,6 @@
 import sqlite3
 
-def request(book_id: int):
+def request(book_author: str, book_title: str):
     """
     ???
             
@@ -10,7 +10,7 @@ def request(book_id: int):
     connection = sqlite3.connect('./data/books.db')
     cursor = connection.cursor()
 
-    cursor.execute(f'DELETE FROM Books WHERE id = {book_id}')
+    cursor.execute(f'DELETE FROM Books WHERE author = ? AND title = ?', (book_author, book_title))
 
     connection.commit()
     connection.close()

@@ -1,37 +1,14 @@
 import sqlite3
 
-def request_all() -> list:
-    """
-    ???
-            
-    Returns:
-        books (list): формируется список из кортежей/а в каждом из которых вся информация по книге/ам
-    """
-    connection = sqlite3.connect('./data/books.db')
-    cursor = connection.cursor()
-
-    cursor.execute('SELECT * FROM Books')
-    books = cursor.fetchall()
-
-    connection.commit()
-    connection.close()
-
-    return books
-
-
-def request_sum() -> list:
+def request_sum() -> tuple:
     """
     ???
 
     Returns:
-        books (list): формируется список из кортежей/а в каждом из которых вся информация по книге/ам
+        len_sum_all, len_sum_state (tuple): формируется список из кортежа ???
     """
     connection = sqlite3.connect('./data/books.db')
     cursor = connection.cursor()
-
-    # cursor.execute('PRAGMA table_info("Books")')
-    # column_names = [i[1] for i in cursor.fetchall()]
-    # print(column_names)
 
     cursor.execute('SELECT COUNT(id) FROM Books')
     book = cursor.fetchall()
@@ -47,12 +24,12 @@ def request_sum() -> list:
     return (len_sum_all, len_sum_state)
 
 
-def request_max_len() -> list:
+def request_max_len() -> tuple:
     """
     ???
 
     Returns:
-        books (list): формируется список из кортежей/а в каждом из которых вся информация по книге/ам
+        len_author, len_title (tuple): формируется список из кортежа ???
     """
     connection = sqlite3.connect('./data/books.db')
     cursor = connection.cursor()
@@ -67,3 +44,28 @@ def request_max_len() -> list:
     connection.close()
 
     return (len_author, len_title)
+
+
+def request_sort(item_sort: str, sorting: bool) -> list:
+    """
+    ???
+
+    Args:
+        item_sort (str): ???
+
+    Returns:
+        books (list): формируется список из кортежей/а в каждом из которых вся информация по книге/ам
+    """
+    connection = sqlite3.connect('./data/books.db')
+    cursor = connection.cursor()
+
+    if sorting:
+        cursor.execute(f'SELECT * FROM Books ORDER BY {item_sort} ASC')
+    else:
+        cursor.execute(f'SELECT * FROM Books ORDER BY {item_sort} DESC')
+    book = cursor.fetchall()
+
+    connection.commit()
+    connection.close()
+
+    return book
