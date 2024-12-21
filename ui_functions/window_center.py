@@ -1,4 +1,10 @@
 def center(self):
+    """
+    Перемещает любое окно приложения в центр экрана.
+
+    Args:
+        self: текущее окно приложения.
+    """
     self.update_idletasks()
     width = self.winfo_width()
     frm_width = self.winfo_rootx() - self.winfo_x()

@@ -1,11 +1,12 @@
 import sqlite3
 
+
 def request_sum() -> tuple:
     """
-    ???
+    Запрос на сумму о количестве всех книг и сумму количества всех прочитанных книг в базе данных.
 
     Returns:
-        len_sum_all, len_sum_state (tuple): формируется список из кортежа ???
+        len_sum_all, len_sum_state (tuple): формируется кортеж с суммой всех книг и суммой всех прочитанных книг.
     """
     connection = sqlite3.connect('./data/books.db')
     cursor = connection.cursor()
@@ -26,10 +27,10 @@ def request_sum() -> tuple:
 
 def request_max_len() -> tuple:
     """
-    ???
+    Запрос на максимальную длину автора и названия книги в базе данных.
 
     Returns:
-        len_author, len_title (tuple): формируется список из кортежа ???
+        len_author, len_title (tuple): формируется кортеж с максимальной длиной автора и названием книги.
     """
     connection = sqlite3.connect('./data/books.db')
     cursor = connection.cursor()
@@ -48,10 +49,11 @@ def request_max_len() -> tuple:
 
 def request_sort(item_sort: str, sorting: bool) -> list:
     """
-    ???
+    Запрос на сортировку книг в базе данных по указанному полю.
 
     Args:
-        item_sort (str): ???
+        item_sort (str): поле для сортировки книг.
+        sorting (bool): флаг указывающий порядок сортировки по убыванию или возрастанию.
 
     Returns:
         books (list): формируется список из кортежей/а в каждом из которых вся информация по книге/ам

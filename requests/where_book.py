@@ -1,11 +1,14 @@
 import sqlite3
 
+
 def request(**book_parameters: dict) -> list:
-    """           
+    """
+    Запрос на поиск книг по указанным параметрам в базе данных.
+
     Args:
-        book_parameters (dict): ???
+        book_parameters (dict): аргументы для поиска книг в формате {ключ: значение}.
     Returns:
-        books (list): формируется список из кортежей/а в каждом из которых вся информация по книге/ам
+        books (list): формируется список из кортежей/а в каждом из которых вся информация по книге/ам.
     """
     connection = sqlite3.connect('./data/books.db')
     cursor = connection.cursor()
@@ -22,7 +25,7 @@ def request(**book_parameters: dict) -> list:
 
     cursor.execute(query, tuple(books_find))
     books = cursor.fetchall()
-            
+
     connection.commit()
     connection.close()
 

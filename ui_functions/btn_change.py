@@ -3,7 +3,18 @@ from tkinter import ttk
 from requests import where_book, update_book
 from ui_functions import window_center, logger
 
+
 class ButtonChange:
+    """
+    Создание модального окна изменения книги.
+
+    Attributes:
+        Представляют собой технические и стилевые характерики модального окна при его запуске.
+
+    Methods:
+        create_window: формирование основного модального окна.
+        action: выполнение действий при нажатии на кнопки -> изменить книгу.
+    """
 
     def __init__(self, select_item):
         self.author = select_item[1]
@@ -57,7 +68,7 @@ class ButtonChange:
         label_trash.place(x=300, y=150)
         combobox_trash = ttk.Combobox(self.add_window, values=answer)
         combobox_trash.place(x=420, y=155)
-        
+
         self.entry_author.insert(0, self.book[1])
         self.entry_title.insert(0, self.book[2])
         combobox_state.set('Прочитано' if self.book[3] == 1 else 'Не прочитано')
@@ -90,7 +101,7 @@ class ButtonChange:
     def action(self):
         author = self.entry_author.get()
         title = self.entry_title.get()
-        try: 
+        try:
             state = f'{1 if self.select_state == "Прочитано" else 0}'
             status = f'{1 if self.select_status == "В библиотеке" else 0}'
             masterpiece = f'{1 if self.select_masterpiece == "Да" else 0}'
@@ -98,7 +109,7 @@ class ButtonChange:
         except AttributeError as error:
             logger.add_log(error, 'change')
         else:
-            if len(author) !=0 and len(title) != 0: 
+            if len(author) != 0 and len(title) != 0:
                 update_book.request(author, title, state, status, masterpiece, trash, self.book[0])
                 self.add_window.destroy()
             else:

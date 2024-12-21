@@ -18,9 +18,11 @@ class App(tk.Tk):
         create_tree_widget: формирование дерева записей приложения
         create_progressbar: ???
         item_selected: обработка выбора выделения строки в дереве записей
-        btn_change: действие при нажатии на кнопку -> изменить книгу
-        btn_delete: действие при нажатии на кнопку -> удалить книгу
+        create_btn_add:
+        create_btn_change: действие при нажатии на кнопку -> изменить книгу
+        create_btn_delete: действие при нажатии на кнопку -> удалить книгу
         update_tree: действие при нажатии на кнопку -> обновить дерево записей
+        sort_column:
     """
 
     def __init__(self):
@@ -51,10 +53,10 @@ class App(tk.Tk):
         """
         menu = tk.Menu()
         menu.add_cascade(label='Обновить', command=self.update_tree)
-        menu.add_cascade(label='Добавить книгу', command=self.btn_add)
-        menu.add_cascade(label='Изменить книгу', command=self.btn_change)
+        menu.add_cascade(label='Добавить книгу', command=self.create_btn_add)
+        menu.add_cascade(label='Изменить книгу', command=self.create_btn_change)
         menu.add_cascade(label='Найти книгу', command=btn_find.ButtonFind)
-        menu.add_cascade(label='Удалить книгу', command=self.btn_delete)
+        menu.add_cascade(label='Удалить книгу', command=self.create_btn_delete)
         self.config(menu=menu)
         self.option_add('*tearOff', tk.FALSE)
         return menu
@@ -159,6 +161,10 @@ class App(tk.Tk):
     # Метод для сортировки по убыванию и возрастанию 
     ####################################################
     def sort_column(self, column) -> None:
+        """
+        ???.
+        """
+
         if self.flag_sort: 
             self.update_tree(bd=select_book.request_sort(column, self.flag_sort))
             self.flag_sort = False
@@ -169,27 +175,33 @@ class App(tk.Tk):
 
     # Методы для работы с кнопками основного меню
     ####################################################
-    def btn_add(self) -> None:
+    def create_btn_add(self) -> None:
         """
         Запуск модального окна при взаимодействии пользователя с инструментом основного меню -> изменить книгу.
         """
-        btn_add.ButtonAdd()
+        modal_window = btn_add.ButtonAdd()
+        modal_window.add_window.wait_window()
+        self.update_tree()
         
-    def btn_change(self) -> None:
+    def create_btn_change(self) -> None:
         """
         Запуск модального окна при взаимодействии пользователя с инструментом основного меню -> изменить книгу.
         """
         try:
-            btn_change.ButtonChange(self.select_item)
+            modal_window = btn_change.ButtonChange(self.select_item)
+            modal_window.add_window.wait_window()
+            self.update_tree()
         except AttributeError as error:
             logger.add_log(error, 'change_choice')
 
-    def btn_delete(self):
+    def create_btn_delete(self):
         """
         Запуск диалогового окна при взаимодействии пользователя с инструментом основного меню -> удалить книгу.
         """
         try:
-            btn_delete.ButtonDelete(self.select_item)
+            delete_button = btn_delete.ButtonDelete(self.select_item)
+            if delete_button.result:
+                self.update_tree()
         except AttributeError as error:
             logger.add_log(error, 'delete')
             

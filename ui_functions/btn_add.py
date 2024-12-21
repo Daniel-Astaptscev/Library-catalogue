@@ -3,7 +3,18 @@ from tkinter import ttk
 from requests import insert_book
 from ui_functions import window_center, logger
 
+
 class ButtonAdd:
+    """
+    Создание модального окна добавления книги.
+
+    Attributes:
+        Представляют собой технические и стилевые характерики модального окна при его запуске.
+
+    Methods:
+        create_window: формирование основного модального окна.
+        action: выполнение действий при нажатии на кнопки -> добавить книгу.
+    """
 
     def __init__(self):
         self.add_window = tk.Toplevel()
@@ -14,7 +25,10 @@ class ButtonAdd:
         window_center.center(self.add_window)
         self.create_window()
 
-    def create_window(self):
+    def create_window(self) -> None:
+        """
+        Создание основного модального окна с полями ввода и кнопкой "добавить книгу".
+        """
         label_author = ttk.Label(self.add_window, text='Автор:',
                                  font=('Georgia', 14))
         label_author.place(x=66, y=20)
@@ -76,10 +90,14 @@ class ButtonAdd:
                                 command=self.action)
         btn_submit.place(x=260, y=218)
 
-    def action(self):
+    def action(self) -> None:
+        """
+        Выполнение действий при нажатии на кнопку "добавить книгу": получение значений из полей ввода и запрос на их
+        добавление в базу данных.
+        """
         author = self.entry_author.get()
         title = self.entry_title.get()
-        try: 
+        try:
             state = f'{1 if self.select_state == "Прочитано" else 0}'
             status = f'{1 if self.select_status == "В библиотеке" else 0}'
             masterpiece = f'{1 if self.select_masterpiece == "Да" else 0}'
@@ -87,7 +105,7 @@ class ButtonAdd:
         except AttributeError as error:
             logger.add_log(error, 'add')
         else:
-            if len(author) !=0 and len(title) != 0: 
+            if len(author) != 0 and len(title) != 0:
                 insert_book.request(author, title, state, status, masterpiece, trash)
                 self.add_window.destroy()
             else:

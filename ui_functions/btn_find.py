@@ -3,7 +3,18 @@ from tkinter import ttk
 from requests import where_book
 from ui_functions import window_center
 
+
 class ButtonFind:
+    """
+    Создание модального окна поиска книги(и).
+
+    Attributes:
+        Представляют собой технические и стилевые характерики модального окна при его запуске.
+
+    Methods:
+        create_window: формирование основного модального окна.
+        action: выполнение действий при нажатии на кнопки -> найти книгу(и).
+    """
 
     def __init__(self):
         self.add_window = tk.Toplevel()
@@ -80,7 +91,7 @@ class ButtonFind:
         author = self.entry_author.get()
         title = self.entry_title.get()
 
-        try: 
+        try:
             state = f'{1 if self.select_state == "Прочитано" else 0}'
             status = f'{1 if self.select_status == "В библиотеке" else 0}'
             masterpiece = f'{1 if self.select_masterpiece == "Да" else 0}'

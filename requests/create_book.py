@@ -1,8 +1,9 @@
 import sqlite3
 
-def request():
+
+def request() -> None:
     """
-    ???
+    Запрос на создание таблицы в базе данных.
     """
     connection = sqlite3.connect('./data/books.db')
     cursor = connection.cursor()
