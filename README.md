@@ -41,6 +41,7 @@
 - os
 - datetime
 - typing
+- logging
 
 ## Интерфейс
 
