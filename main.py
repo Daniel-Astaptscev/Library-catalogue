@@ -2,9 +2,11 @@ import tkinter as tk
 import os
 from tkinter import ttk
 from tkinter.messagebox import showwarning
+import logging
 
 from requests import *
 from ui_functions import *
+
 
 class App(tk.Tk):
     """
@@ -14,14 +16,15 @@ class App(tk.Tk):
         Представляют собой технические и стилевые характерики приложения при его запуске.
 
     Methods:
-        create_main_menu: формирование основного пользовательского меню
-        create_tree_widget: формирование дерева записей приложения
-        create_progressbar: ???
-        item_selected: обработка выбора выделения строки в дереве записей
-        create_btn_add:
-        create_btn_change: действие при нажатии на кнопку -> изменить книгу
-        create_btn_delete: действие при нажатии на кнопку -> удалить книгу
-        update_tree: действие при нажатии на кнопку -> обновить дерево записей
+        create_main_menu: формирование основного пользовательского меню.
+        create_tree_widget: формирование дерева записей приложения.
+        create_progressbar:
+        item_selected: обработка выбора выделения строки в дереве записей.
+        create_btn_find: действие при нажатии на кнопку -> найти книгу(и).
+        create_btn_add: действие при нажатии на кнопку -> добавить книгу.
+        create_btn_change: действие при нажатии на кнопку -> изменить книгу.
+        create_btn_delete: действие при нажатии на кнопку -> удалить книгу.
+        update_tree: действие при нажатии на кнопку -> обновить дерево записей.
         sort_column:
     """
 
@@ -33,10 +36,10 @@ class App(tk.Tk):
         self.window_width = 1412
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
-        x_cordinate = int((screen_width/2) - (self.window_width/2))
-        y_cordinate = int((screen_height/2) - (self.window_height/2))
-        self.geometry("{}x{}+{}+{}".format(self.window_width, self.window_height, x_cordinate, y_cordinate))   
-        
+        x_cordinate = int((screen_width / 2) - (self.window_width / 2))
+        y_cordinate = int((screen_height / 2) - (self.window_height / 2))
+        self.geometry("{}x{}+{}+{}".format(self.window_width, self.window_height, x_cordinate, y_cordinate))
+
         self.flag_sort = True
 
         create_book.request()
@@ -44,7 +47,7 @@ class App(tk.Tk):
         self.menu = self.create_main_menu()
         self.progressbar = self.create_progressbar()
 
-    def create_main_menu(self):
+    def create_main_menu(self) -> tk.Menu:
         """
         Создание основного пользовательского меню с инструментами для осуществления дальнейшего взаимодействия пользователя с программой.
 
@@ -55,7 +58,7 @@ class App(tk.Tk):
         menu.add_cascade(label='Обновить', command=self.update_tree)
         menu.add_cascade(label='Добавить книгу', command=self.create_btn_add)
         menu.add_cascade(label='Изменить книгу', command=self.create_btn_change)
-        menu.add_cascade(label='Найти книгу', command=btn_find.ButtonFind)
+        menu.add_cascade(label='Найти книгу', command=self.create_btn_find)
         menu.add_cascade(label='Удалить книгу', command=self.create_btn_delete)
         self.config(menu=menu)
         self.option_add('*tearOff', tk.FALSE)
@@ -63,20 +66,20 @@ class App(tk.Tk):
 
     def item_selected(self, event) -> list:
         """
-        Обработка выделения строки в дереве записей приложения
+        Обработка выделения строки в дереве записей приложения.
 
         Args:
-            event: событие при выделении строки
+            event: событие при выделении строки.
 
         Returns:
-            select_item (list): ???.
+            select_item (list): список со всей информацией о выбранной книге.
         """
         for selected_item in self.tree.selection():
             item = self.tree.item(selected_item)
             self.select_item = item['values']
         return self.select_item
 
-    def create_tree_widget(self, bd: list = None):
+    def create_tree_widget(self, bd: list = None) -> ttk.Treeview:
         """
         Создание основного дерева с записями о книгах сформированного из базы данных.
 
@@ -91,7 +94,7 @@ class App(tk.Tk):
         style.configure('mystyle.Treeview.Heading', font=('Times New '
                                                           'Roman', 14, 'bold'))
         style.configure('mystyle.Treeview', font=('Times New Roman', 14))
-        
+
         self.rowconfigure(index=2, weight=2)
         self.columnconfigure(index=0, weight=1)
         columns = ('column_1', 'column_2', 'column_3', 'column_4', 'column_5')
@@ -107,9 +110,9 @@ class App(tk.Tk):
         width_column_2, width_column_3 = select_book.request_max_len()
 
         self.tree.column('#1', stretch=tk.NO, width=40, anchor='center')
-        self.tree.column('#2', stretch=tk.NO, width=width_column_2*9,
+        self.tree.column('#2', stretch=tk.NO, width=width_column_2 * 9,
                          anchor='ne')
-        self.tree.column('#3', stretch=tk.NO, width=width_column_3*10)
+        self.tree.column('#3', stretch=tk.NO, width=width_column_3 * 10)
         self.tree.column('#4', stretch=tk.NO, width=110, anchor='center')
         self.tree.column('#5', stretch=tk.NO, width=80, anchor='center')
 
@@ -120,7 +123,7 @@ class App(tk.Tk):
         self.tree.tag_configure('unread', background='#ecf2f9')
         self.tree.tag_configure('read', background='#9fbfdf')
 
-        def insert_book(item):
+        def insert_book(item) -> None:
             book_state = ('✔️' if item[3] == 1 else '')
             book_masterpiece = ('🏆' if item[5] == 1 else '')
             book_trash = ('♻' if item[6] == 1 else '')
@@ -129,10 +132,8 @@ class App(tk.Tk):
                 self.tree.insert("", tk.END, values=(num, item[1], item[2], book_state, book_status), tags='read')
             else:
                 self.tree.insert("", tk.END, values=(num, item[1], item[2], book_state, book_status), tags='unread')
-            
+
         if type(bd) == list:
-            if len(bd) == 0:
-                showwarning(title='Ошибка', message='Данная книга/и не найдена в базе данных')
             for num, item in enumerate(bd, start=1):
                 insert_book(item)
         else:
@@ -143,13 +144,14 @@ class App(tk.Tk):
 
         return self.tree
 
-    def create_progressbar(self):
+    def create_progressbar(self) -> None:
         """
         ???
         """
         maximum_value, current_value = select_book.request_sum()
 
-        label_progressbar = ttk.Label(text=f'Прогресс чтения: {current_value} прочитно из {maximum_value}', font=('Times New Roman', 12, 'bold'))
+        label_progressbar = ttk.Label(text=f'Прогресс чтения: {current_value} прочитно из {maximum_value}',
+                                      font=('Times New Roman', 12, 'bold'))
         label_progressbar.grid(row=0, column=0, sticky='w')
         progressbar = ttk.Progressbar(orient='horizontal',
                                       length=self.window_width,
@@ -157,24 +159,30 @@ class App(tk.Tk):
                                       value=current_value)
         progressbar.grid(row=1, column=0, sticky='n')
 
-
-    # Метод для сортировки по убыванию и возрастанию 
+    # Метод для сортировки по убыванию и возрастанию
     ####################################################
     def sort_column(self, column) -> None:
         """
         ???.
         """
 
-        if self.flag_sort: 
+        if self.flag_sort:
             self.update_tree(bd=select_book.request_sort(column, self.flag_sort))
             self.flag_sort = False
         else:
             self.update_tree(bd=select_book.request_sort(column, self.flag_sort))
             self.flag_sort = True
 
-
     # Методы для работы с кнопками основного меню
     ####################################################
+    def create_btn_find(self) -> None:
+        """
+        Запуск модального окна при взаимодействии пользователя с инструментом основного меню -> найти книгу(и).
+        """
+        modal_window = btn_find.ButtonFind()
+        modal_window.add_window.wait_window()
+        self.update_tree(bd=modal_window.result)
+
     def create_btn_add(self) -> None:
         """
         Запуск модального окна при взаимодействии пользователя с инструментом основного меню -> изменить книгу.
@@ -182,7 +190,7 @@ class App(tk.Tk):
         modal_window = btn_add.ButtonAdd()
         modal_window.add_window.wait_window()
         self.update_tree()
-        
+
     def create_btn_change(self) -> None:
         """
         Запуск модального окна при взаимодействии пользователя с инструментом основного меню -> изменить книгу.
@@ -194,7 +202,7 @@ class App(tk.Tk):
         except AttributeError as error:
             logger.add_log(error, 'change_choice')
 
-    def create_btn_delete(self):
+    def create_btn_delete(self) -> None:
         """
         Запуск диалогового окна при взаимодействии пользователя с инструментом основного меню -> удалить книгу.
         """
@@ -204,7 +212,6 @@ class App(tk.Tk):
                 self.update_tree()
         except AttributeError as error:
             logger.add_log(error, 'delete')
-            
 
     def update_tree(self, bd: list = None) -> None:
         """
@@ -217,7 +224,7 @@ class App(tk.Tk):
         self.tree = self.create_tree_widget(bd)
 
 
-if __name__ == "__main__":  
+if __name__ == "__main__":
     if not os.path.isdir('data'):
         os.mkdir('data')
         logs_file = open('./data/logs.txt', 'w')
