@@ -32,3 +32,19 @@
 19.12.24 21:35:36: '_tkinter.tkapp' object has no attribute 'select_item'
 22.12.24 00:20:43: '_tkinter.tkapp' object has no attribute 'select_item'
 22.12.24 00:20:55: '_tkinter.tkapp' object has no attribute 'select_item'
+22.12.24 18:55:44: the text in the field is empty
+22.12.24 18:57:07: 'ButtonAdd' object has no attribute 'select_state'
+22.12.24 19:13:12: No search criteria provided
+22.12.24 19:13:28: No search criteria provided
+22.12.24 19:13:28: No search criteria provided
+22.12.24 19:13:29: No search criteria provided
+22.12.24 19:14:02: No books found matching the criteria
+22.12.24 19:16:21: No books found matching the criteria
+22.12.24 19:16:23: No books found matching the criteria
+22.12.24 19:16:23: No books found matching the criteria
+22.12.24 19:16:23: No books found matching the criteria
+22.12.24 19:19:36: the text in the field is empty
+22.12.24 19:31:01: the text in the field is empty
+22.12.24 19:35:33: '_tkinter.tkapp' object has no attribute 'select_item'
+08.01.25 14:12:18: 'ButtonAdd' object has no attribute 'select_state'
+08.01.25 14:12:59: the text in the field is empty

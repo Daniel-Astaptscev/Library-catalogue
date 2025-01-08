@@ -28,3 +28,5 @@ def add_log(type_error: str, show_messege: str) -> showerrorObject:
         return showerror(title="Не все поля заполнены", message="Заполните все поля для добавления книги в библиотеку")
     elif show_messege == 'change':
         return showerror(title="Не все поля заполнены", message="Заполните все поля для изменения книги в библиотеке")
+    elif show_messege == 'find':
+        return showerror(title="Не все поля заполнены", message="Заполните хоть одно поле для поиска книги в библиотеке")

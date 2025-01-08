@@ -1,0 +1,13 @@
+__main__ 2025-01-08 12:58:03,203 INFO Book Эдгар Аллан По - «Человек толпы» has been successfully modified.
+__main__ 2025-01-08 12:59:06,001 INFO Book Эдгар Аллан По - «Человек толпы» has been successfully modified.
+__main__ 2025-01-08 12:59:12,550 INFO Book Эдгар Аллан По - «Человек толпы» has been successfully modified.
+__main__ 2025-01-08 12:59:28,482 INFO Book Эдгар Аллан По - «Человек толпы» has been successfully modified.
+__main__ 2025-01-08 12:59:36,155 INFO Book Эдгар АлланПРО - «Человек толпы» was successfully deleted.
+__main__ 2025-01-08 13:12:31,511 WARNING AttributeError ChangeBook
+Traceback (most recent call last):
+  File "D:\Education\Project Python\Project # 7 Library catalogue\main.py", line 222, in create_btn_change
+    modal_window = btn_change.ButtonChange(self.select_item)
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.9_3.9.3568.0_x64__qbz5n2kfra8p0\lib\tkinter\__init__.py", line 2354, in __getattr__
+    return getattr(self.tk, attr)
+AttributeError: '_tkinter.tkapp' object has no attribute 'select_item'
+__main__ 2025-01-08 14:13:02,483 INFO Book Алексис Киви - «Семь братьев» has been successfully modified.

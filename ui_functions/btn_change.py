@@ -30,6 +30,9 @@ class ButtonChange:
         self.create_window()
 
     def create_window(self):
+        """
+        Создание основного модального окна с полями ввода и кнопкой "изменить книгу".
+        """
         label_author = ttk.Label(self.add_window, text='Автор:',
                                  font=('Georgia', 14))
         label_author.place(x=66, y=20)
@@ -99,18 +102,25 @@ class ButtonChange:
         btn_submit.place(x=260, y=218)
 
     def action(self):
+        """
+        Выполнение действий при нажатии на кнопку "изменить книгу": получение значений из полей ввода и запрос на
+        изменение книги в базе данных.
+        """
         author = self.entry_author.get()
         title = self.entry_title.get()
-        try:
-            state = f'{1 if self.select_state == "Прочитано" else 0}'
-            status = f'{1 if self.select_status == "В библиотеке" else 0}'
-            masterpiece = f'{1 if self.select_masterpiece == "Да" else 0}'
-            trash = f'{1 if self.select_trash == "Да" else 0}'
-        except AttributeError as error:
-            logger.add_log(error, 'change')
+
+        state = getattr(self, 'select_state', 'Прочитано' if self.book[3] == 1 else 'Не прочитано')
+        status = getattr(self, 'select_status', 'В библиотеке' if self.book[4] == 1 else 'Отсутствует')
+        masterpiece = getattr(self, 'select_masterpiece', 'Да' if self.book[5] == 1 else 'Нет')
+        trash = getattr(self, 'select_trash', 'Да' if self.book[6] == 1 else 'Нет')
+
+        state_binary = '1' if state == "Прочитано" else '0'
+        status_binary = '1' if status == "В библиотеке" else '0'
+        masterpiece_binary = '1' if masterpiece == "Да" else '0'
+        trash_binary = '1' if trash == "Да" else '0'
+
+        if len(author) != 0 and len(title) != 0:
+            update_book.request(author, title, state_binary, status_binary, masterpiece_binary, trash_binary, self.book[0])
+            self.add_window.destroy()
         else:
-            if len(author) != 0 and len(title) != 0:
-                update_book.request(author, title, state, status, masterpiece, trash, self.book[0])
-                self.add_window.destroy()
-            else:
-                logger.add_log('the text in the field is empty', 'change')
+            logger.add_log('the text in the field is empty', 'change')

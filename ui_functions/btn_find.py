@@ -1,7 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 from requests import where_book
-from ui_functions import window_center
+from ui_functions import window_center, logger
+from tkinter.messagebox import showwarning
 
 
 class ButtonFind:
@@ -21,11 +22,15 @@ class ButtonFind:
         self.add_window.title('Найти книгу(и)')
         self.add_window.geometry('610x280')
         self.add_window.iconbitmap('./icons/favicon_find.ico')
+        self.result = []
 
         window_center.center(self.add_window)
         self.create_window()
 
     def create_window(self):
+        """
+        Создание основного модального окна с полями ввода и кнопкой "найти книгу(и)".
+        """
         label_author = ttk.Label(self.add_window, text='Автор:',
                                  font=('Georgia', 14))
         label_author.place(x=66, y=20)
@@ -88,14 +93,35 @@ class ButtonFind:
         btn_submit.place(x=260, y=218)
 
     def action(self):
-        author = self.entry_author.get()
-        title = self.entry_title.get()
+        """
+        Выполнение действий при нажатии на кнопку "найти книгу(и)": получение значений из полей ввода и запрос на
+        поиск книг(и) в базе данных.
+        """
+        author = self.entry_author.get().strip()
+        title = self.entry_title.get().strip()
+        state = getattr(self, 'select_state', None)
+        status = getattr(self, 'select_status', None)
+        masterpiece = getattr(self, 'select_masterpiece', None)
+        trash = getattr(self, 'select_trash', None)
 
-        try:
-            state = f'{1 if self.select_state == "Прочитано" else 0}'
-            status = f'{1 if self.select_status == "В библиотеке" else 0}'
-            masterpiece = f'{1 if self.select_masterpiece == "Да" else 0}'
-            trash = f'{1 if self.select_trash == "Да" else 0}'
-        finally:
-            # where_book.request(author=author, title=title, state=state, status=status, masterpiece=masterpiece, trash=trash)
+        fields = {
+            'author': author,
+            'title': title,
+            'state': '1' if state == "Прочитано" else ('0' if state == "Не прочитано" else None),
+            'status': '1' if status == "В библиотеке" else ('0' if status == "Отсутствует" else None),
+            'masterpiece': '1' if masterpiece == "Да" else ('0' if masterpiece == "Нет" else None),
+            'trash': '1' if trash == "Да" else ('0' if trash == "Нет" else None)
+        }
+
+        fields = {k: v for k, v in fields.items() if v}
+
+        if not fields:
+            logger.add_log('the text in the field is empty', 'find')
+            return
+
+        self.result = where_book.request(**fields)
+        if self.result:
+            self.add_window.destroy()
+        else:
+            showwarning(title='Ошибка', message='Данная книга/и не найдена в базе данных')
             self.add_window.destroy()

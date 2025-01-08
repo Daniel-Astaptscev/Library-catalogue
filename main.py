@@ -1,7 +1,7 @@
 import tkinter as tk
-import os
 from tkinter import ttk
-from tkinter.messagebox import showwarning
+from tkinter.messagebox import showerror
+import os
 import logging
 
 from requests import *
@@ -18,14 +18,15 @@ class App(tk.Tk):
     Methods:
         create_main_menu: формирование основного пользовательского меню.
         create_tree_widget: формирование дерева записей приложения.
-        create_progressbar:
+        create_progressbar: создание и заполнение шкалы прогресс-бара.
         item_selected: обработка выбора выделения строки в дереве записей.
         create_btn_find: действие при нажатии на кнопку -> найти книгу(и).
         create_btn_add: действие при нажатии на кнопку -> добавить книгу.
         create_btn_change: действие при нажатии на кнопку -> изменить книгу.
         create_btn_delete: действие при нажатии на кнопку -> удалить книгу.
         update_tree: действие при нажатии на кнопку -> обновить дерево записей.
-        sort_column:
+        sort_column: выполнение сортировки дерева записей по столбцу.
+        on_window_resize: обработка изменения размера progressbar при изменении окна приложения.
     """
 
     def __init__(self):
@@ -45,7 +46,10 @@ class App(tk.Tk):
         create_book.request()
         self.tree = self.create_tree_widget()
         self.menu = self.create_main_menu()
+        self.progressbar = None
         self.progressbar = self.create_progressbar()
+
+        self.bind('<Configure>', self.on_window_resize)
 
     def create_main_menu(self) -> tk.Menu:
         """
@@ -77,7 +81,8 @@ class App(tk.Tk):
         for selected_item in self.tree.selection():
             item = self.tree.item(selected_item)
             self.select_item = item['values']
-        return self.select_item
+            return self.select_item
+        return ""
 
     def create_tree_widget(self, bd: list = None) -> ttk.Treeview:
         """
@@ -123,8 +128,14 @@ class App(tk.Tk):
         self.tree.tag_configure('unread', background='#ecf2f9')
         self.tree.tag_configure('read', background='#9fbfdf')
 
-        def insert_book(item) -> None:
-            book_state = ('✔️' if item[3] == 1 else '')
+        def insert_book(item: tuple) -> None:
+            """
+            Добавление всех полей с информацией о книге в дерерво записей. 
+
+            Args:
+                item (tuple): кортеж с информацией о книге.
+            """
+            book_state = ('✔' if item[3] == 1 else '')
             book_masterpiece = ('🏆' if item[5] == 1 else '')
             book_trash = ('♻' if item[6] == 1 else '')
             book_status = book_masterpiece + book_trash
@@ -144,28 +155,39 @@ class App(tk.Tk):
 
         return self.tree
 
+    def on_window_resize(self, event) -> None:
+        """
+        Обработка изменения размера progressbar при изменении окна приложения.
+        """
+        if self.progressbar:
+            width = self.winfo_width() if event is None else event.width
+            self.progressbar.config(length=width - 4)
+
     def create_progressbar(self) -> None:
         """
-        ???
+        Создание и заполнение шкалы прогресс-бара в зависимости от кол-ва прочитанных книг из базы данных по отношению к их общему кол-ву.
         """
         maximum_value, current_value = select_book.request_sum()
 
-        label_progressbar = ttk.Label(text=f'Прогресс чтения: {current_value} прочитно из {maximum_value}',
-                                      font=('Times New Roman', 12, 'bold'))
-        label_progressbar.grid(row=0, column=0, sticky='w')
-        progressbar = ttk.Progressbar(orient='horizontal',
-                                      length=self.window_width,
-                                      maximum=maximum_value,
-                                      value=current_value)
-        progressbar.grid(row=1, column=0, sticky='n')
+        self.label_progressbar = ttk.Label(text=f'Прогресс чтения: {current_value} прочитно из {maximum_value}',
+                                           font=('Times New Roman', 12, 'bold'))
+        self.label_progressbar.grid(row=0, column=0, sticky='w')
+        self.progressbar = ttk.Progressbar(orient='horizontal',
+                                           maximum=maximum_value,
+                                           value=current_value)
+        self.progressbar.grid(row=1, column=0, sticky='ew')
+        self.columnconfigure(0, weight=1)
+        self.on_window_resize(None)
 
     # Метод для сортировки по убыванию и возрастанию
     ####################################################
-    def sort_column(self, column) -> None:
+    def sort_column(self, column: str) -> None:
         """
-        ???.
-        """
+        Выполнение сортировки дерева записей по выбранному столбцу в зависимости от флага: по возрастанию или по убыванию. 
 
+        Args:
+            column (str): название столбца для осуществления сортировки.
+        """
         if self.flag_sort:
             self.update_tree(bd=select_book.request_sort(column, self.flag_sort))
             self.flag_sort = False
@@ -185,7 +207,7 @@ class App(tk.Tk):
 
     def create_btn_add(self) -> None:
         """
-        Запуск модального окна при взаимодействии пользователя с инструментом основного меню -> изменить книгу.
+        Запуск модального окна при взаимодействии пользователя с инструментом основного меню -> добавить книгу.
         """
         modal_window = btn_add.ButtonAdd()
         modal_window.add_window.wait_window()
@@ -198,9 +220,11 @@ class App(tk.Tk):
         try:
             modal_window = btn_change.ButtonChange(self.select_item)
             modal_window.add_window.wait_window()
+            py_logger.info(f'Book {self.select_item[1]} - {self.select_item[2]} has been successfully modified.')
             self.update_tree()
         except AttributeError as error:
-            logger.add_log(error, 'change_choice')
+            py_logger.warning('AttributeError ChangeBook', exc_info=True)
+            showerror(title='Книга не выбрана', message='Ни одна книга не выбрана для изменения')
 
     def create_btn_delete(self) -> None:
         """
@@ -208,10 +232,12 @@ class App(tk.Tk):
         """
         try:
             delete_button = btn_delete.ButtonDelete(self.select_item)
+            py_logger.info(f'Book {self.select_item[1]} - {self.select_item[2]} was successfully deleted.')
             if delete_button.result:
                 self.update_tree()
-        except AttributeError as error:
-            logger.add_log(error, 'delete')
+        except AttributeError:
+            py_logger.warning('AttributeError DeleteBook', exc_info=True)
+            showerror(title='Книга не выбрана', message='Ни одна книга не выбрана для удаления')
 
     def update_tree(self, bd: list = None) -> None:
         """
@@ -227,7 +253,19 @@ class App(tk.Tk):
 if __name__ == "__main__":
     if not os.path.isdir('data'):
         os.mkdir('data')
-        logs_file = open('./data/logs.txt', 'w')
+
+    # Формирование и запись логов в текстовый файл
+    # получение пользовательского логгера и установка уровня логирования
+    py_logger = logging.getLogger(__name__)
+    py_logger.setLevel(logging.INFO)
+
+    # настройка обработчика и форматировщика 
+    py_handler = logging.FileHandler(f'./data/{__name__}.log', mode='a')
+    py_formatter = logging.Formatter('%(name)s %(asctime)s %(levelname)s %(message)s')
+
+    # добавление форматировщика и обработчика к обработчику 
+    py_handler.setFormatter(py_formatter)
+    py_logger.addHandler(py_handler)
 
     app = App()
     app.mainloop()
